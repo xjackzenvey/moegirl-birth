@@ -5,6 +5,8 @@ import json
 import logging
 import os
 import shutil
+import requests
+from bs4 import BeautifulSoup
 from config import sitedata_save_filename,db,db_table  
 logging.getLogger().setLevel(logging.INFO)
     
@@ -23,9 +25,10 @@ class Character:
         return f"name: {self.name}\nbirth: {self.birth}\nnote: {self.note}"
 
     def get_info(self):
-        _client = Client(url='https://moegirl.uk/')
-        _client.get_page(self.info_url)
-        self.note = remove_html_tags(_client.select(self.info_url,"div.mw-parser-output p")[0].text)
+        _content = requests.get("https://moegirl.uk"+self.info_url).content
+        _text = BeautifulSoup(_content).select("div.mw-parser-output p")[0].text
+        _text = remove_html_tags(_text)
+        self.note = _text
 
     def push_to_db(self,db:sql_db,table:str):
         try:
