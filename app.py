@@ -15,9 +15,7 @@ class Character:
     def __init__(self,name:str,birth:str,info_url:str) -> None:
         self.name = name
         self.birth = birth
-        self.info_url = ''
-        self.note = ''
-        self.get_info()
+        self.info_url = info_url
         self.push_to_db(db,db_table)
         logging.log(logging.INFO,msg=f"已检索到角色：{self.name}；生日：{self.birth}")
         
@@ -37,8 +35,7 @@ class Character:
                 data= {
                     'name' : self.name,
                     'birth' : self.birth,
-                    'info_url' : self.info_url,
-                    'note' : self.note
+                    'info_url' : self.info_url
                 }
             )
         except:
@@ -74,7 +71,6 @@ class Application:
         self.client = Client(url=root_url)
         self.sitedata = Sitedata()
         self.characters = []
-        
         self.setupClient(cookie=None)
     
     def checkenv(self):
