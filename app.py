@@ -3,6 +3,8 @@ from utils.sql import sql_db
 from utils.encoder import sitedataEncoder
 import json
 import logging
+import os
+import shutil
 from config import sitedata_save_filename,db,db_table  
 logging.getLogger().setLevel(logging.INFO)
     
@@ -48,7 +50,7 @@ class Sitedata:
         
     def push_urlsBymonth(self,text:str,url:str):
         self.urls_by_month[text] = url
-        self.save()
+        #self.save()
         
     def push_chBydate(self,character:Character):
         character_name,date = character.name,character.birth
@@ -69,8 +71,14 @@ class Application:
         self.client = Client(url=root_url)
         self.sitedata = Sitedata()
         self.characters = []
+        
         self.setupClient(cookie=None)
     
+    def checkenv(self):
+        if not os.path.exists('./data/characters.db'):
+            logging.log(logging.WARNING,msg="未找到数据库文件 data/character.db，将从characters_init.db创建。")
+            shutil.copyfile("data/characters_init.db","data/characters.db")    
+
     def setupClient(self,cookie:str):
         if cookie != None:
             self.client.setHeader('Cookie',cookie)
